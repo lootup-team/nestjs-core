@@ -5,7 +5,7 @@ import { MODULE_OPTIONS_TOKEN } from './context.module-builder';
 import { ContextModuleOptions } from './context.options';
 import { ContextWrapper } from './context.wrapper';
 
-export const configureContextWrappers = (app: INestApplication) => {
+export const configureContextWrappers = () => (app: INestApplication) => {
   const context = app.get(ContextManager);
   const options = app.get<ContextModuleOptions>(MODULE_OPTIONS_TOKEN);
   const wrapper = new ContextWrapper(context, options);
