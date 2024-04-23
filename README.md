@@ -49,9 +49,11 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  // <<-- Setup Context Wrappers Here -->>
-  configureContextWrappers(app);
+  const app = await NestFactory.create(AppModule).then(
+    // <<-- Setup Context Wrappers Here -->>
+    configureContextWrappers(),
+  );
+
   await app.listen(3000);
 }
 bootstrap();
