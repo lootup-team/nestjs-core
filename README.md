@@ -7,7 +7,7 @@ Core package providing out of the box working implementation for using Async Loc
 ### Step 1: Installation
 
 ```bash
-$ npm install @gedai/core
+$ npm install @gedai/core @nestjs/config
 ```
 
 ### Step 2: The Setup
@@ -20,12 +20,15 @@ For HTTP apps use the middlewareSetup which applies globally to all routes, for 
 // app.module.ts
 import { ContextModule } from '@gedai/core';
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { randomUUID } from 'crypto';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
 @Module({
   imports: [
+    // <<-- Setup Config Module Here -->>
+    ConfigModule.forRoot({ isGlobal: true })
     // <<-- Setup Context Module Here -->>
     ContextModule.forRoot({
       middlewareSetup: (store, req) => {
@@ -68,12 +71,16 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class AppService {
+  private readonly logger = new Logger(this.constructor.name);
   // <<-- Injected here -->>
   constructor(private readonly context: ContextService) {}
 
   getHello(): string {
     // <<-- Used here -->>
     const traceId = this.context.get<string>('traceId');
+    // <<-- These logs will have the contextId -->>
+    this.logger.log('Magic!');
+    this.logger.log('Another magic!');
     return `[${traceId}]: Hello World!`;
   }
 }
