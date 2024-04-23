@@ -6,9 +6,11 @@ import {
   Logger,
   NestMiddleware,
 } from '@nestjs/common';
+import { randomUUID } from 'crypto';
 import { NextFunction, Request, Response } from 'express';
 import { Observable } from 'rxjs';
 import { ContextManager } from './context.manager';
+import { Context } from './context.model';
 import { MODULE_OPTIONS_TOKEN } from './context.module-builder';
 import { ContextModuleOptions } from './context.options';
 
@@ -26,16 +28,24 @@ export class ContextWrapper implements NestMiddleware, NestMiddleware {
     }
   }
 
+  private addContextIdOrDefault(
+    store: Context,
+    existingId: string = randomUUID(),
+  ) {
+    const id = store.getId();
+    if (!id) {
+      store.setId(existingId);
+    }
+  }
+
   use(req: Request, res: Response, next: NextFunction) {
     this.logger.debug('Context was initialized');
     const { middlewareSetup: mountMiddleware = () => null } = this.options;
-    const store = this.context.getStoreOrDefault();
+    const store = this.context.getContextOrDefault();
+    const id = req.get('x-context-id');
     mountMiddleware(store, req);
+    this.addContextIdOrDefault(store, id);
     this.context.run(store, async () => next());
-    res.on('finish', () => {
-      this.context.destroy();
-      this.logger.debug('Context was cleared');
-    });
   }
 
   intercept(
@@ -47,23 +57,20 @@ export class ContextWrapper implements NestMiddleware, NestMiddleware {
     }
     this.logger.debug('Context was initialized');
     const { interceptorSetup: mountInterceptor = () => null } = this.options;
-    const store = this.context.getStoreOrDefault();
-    mountInterceptor(store, executionContext);
+    const context = this.context.getContextOrDefault();
+    mountInterceptor(context, executionContext);
+    /** TODO: reload context id from AMQP */
+    this.addContextIdOrDefault(context);
     return new Observable((subscriber) => {
-      this.context.run(store, async () =>
+      this.context.run(context, async () =>
         next
           .handle()
           .pipe()
           .subscribe({
             next: (d) => subscriber.next(d),
-            complete: () => {
-              this.context.destroy();
-              return subscriber.complete();
-            },
+            complete: () => subscriber.complete(),
             error: (e) => {
-              e.context = new Map(store);
-              this.context.destroy();
-              this.logger.debug('Context was cleared');
+              e.context = Context.clone(context);
               return subscriber.error(e);
             },
           }),

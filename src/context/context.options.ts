@@ -1,13 +1,11 @@
 import { ExecutionContext } from '@nestjs/common';
 import { Request } from 'express';
+import { Context } from './context.model';
 
-export type ContextMiddlewareSetup = (
-  store: Map<string, any>,
-  req: Request,
-) => void;
+export type ContextMiddlewareSetup = (context: Context, req: Request) => void;
 
 export type ContextInterceptorSetup = (
-  store: Map<string, any>,
+  context: Context,
   executionContext: ExecutionContext,
 ) => void;
 

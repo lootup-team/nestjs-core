@@ -1,15 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { AsyncLocalStorage } from 'async_hooks';
+import { Context } from './context.model';
 
 @Injectable()
 export class ContextManager {
-  private readonly context = new AsyncLocalStorage<Map<string, any>>();
+  private readonly context = new AsyncLocalStorage<Context>();
 
   isActive() {
     return Boolean(this.context.getStore());
   }
 
-  getStore(): Map<string, any> {
+  getContext(): Context {
     const store = this.context.getStore();
     if (!store) {
       throw new Error('Context is not active!');
@@ -17,16 +18,15 @@ export class ContextManager {
     return store;
   }
 
-  getStoreOrDefault(): Map<string, any> {
-    return this.context.getStore() ?? new Map<string, any>();
+  getContextOrDefault(): Context {
+    const existingStore = this.context.getStore();
+    if (existingStore) {
+      return existingStore;
+    }
+    return Context.createNew();
   }
 
-  destroy() {
-    const store = this.context.getStore();
-    store?.clear();
-  }
-
-  run(store: Map<string, any>, callback: () => void) {
+  run(store: Context, callback: () => void) {
     this.context.run(store, callback);
   }
 }
