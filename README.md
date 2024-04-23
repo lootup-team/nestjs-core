@@ -1,34 +1,31 @@
 ## Description
 
-Core package providing out of the box working implementation for using Async Local Storage with NestJS in both RPC and TPC manners. It also provides a single dependency package that comprises common utilities that most services require. For a complete list of features take a look at [features](#features) section.
+Core package providing out of the box working implementation for using Async Local Storage with NestJS in both RPC and TPC manners.
 
 ## Getting Started
 
 ### Step 1: Installation
 
 ```bash
-$ npm install @gedai/core @nestjs/config
+$ npm install @gedai/core
 ```
 
 ### Step 2: The Setup
 
 Import the required module and create the specific setup for your needs (http/rpc/both). These setup functions are completely optional and allow for customization of the initialization process.
 
-For HTTP apps use the middlewareSetup which applies globally to all routes, for Nest's Microservices use the interceptorSetup which will also apply globally, but as an interceptor since microservices don't have the middlewares lifecycle. If you are working with a hybrid application, you can setup both methods and Context Module will automatically determine which is better for each execution context.
+For HTTP apps use the middlewareSetup which applies globally to all routes, for Nest's Microservices use the interceptorSetup which will also apply globally, but as an interceptor since microservices don't have the middleware lifecycle. If you are working with a hybrid application, you can setup both methods and Context Module will automatically determine which is better for each execution context.
 
 ```typescript
 // app.module.ts
 import { ContextModule } from '@gedai/core';
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
 import { randomUUID } from 'crypto';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
 @Module({
   imports: [
-    // <<-- Setup Config Module Here -->>
-    ConfigModule.forRoot({ isGlobal: true })
     // <<-- Setup Context Module Here -->>
     ContextModule.forRoot({
       middlewareSetup: (store, req) => {
@@ -71,16 +68,12 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class AppService {
-  private readonly logger = new Logger(this.constructor.name);
   // <<-- Injected here -->>
   constructor(private readonly context: ContextService) {}
 
   getHello(): string {
     // <<-- Used here -->>
     const traceId = this.context.get<string>('traceId');
-    // <<-- These logs will have the contextId -->>
-    this.logger.log('Magic!');
-    this.logger.log('Another magic!');
     return `[${traceId}]: Hello World!`;
   }
 }
