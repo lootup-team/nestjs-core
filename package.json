@@ -1,11 +1,16 @@
 {
-  "name": "@gedai/core",
+  "name": "@gedai/nestjs-core",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "Core Package for Gedai opionated use of NestJS",
+  "author": "gm50x",
   "private": false,
   "publishConfig": {
-    "registry": "http://localhost:4873"
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gedai-dev/nestjs-core.git"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
