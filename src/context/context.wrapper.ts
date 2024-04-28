@@ -5,20 +5,35 @@ import {
   Injectable,
   Logger,
   NestMiddleware,
+  SetMetadata,
 } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 import { randomUUID } from 'crypto';
 import { NextFunction, Request, Response } from 'express';
 import { Observable } from 'rxjs';
 import { ContextManager } from './context.manager';
 import { Context } from './context.model';
 import { MODULE_OPTIONS_TOKEN } from './context.module-builder';
-import { ContextModuleOptions } from './context.options';
+import {
+  ContextInterceptorSetup,
+  ContextModuleOptions,
+} from './context.options';
+
+const KEY = '@gedai/core/propagated-context';
+
+type ReloadContextMetadata = {
+  interceptorSetup?: ContextInterceptorSetup;
+};
+
+export const ReloadContext = (opts: ReloadContextMetadata) =>
+  SetMetadata(KEY, opts);
 
 @Injectable()
 export class ContextWrapper implements NestMiddleware, NestMiddleware {
   private readonly logger = new Logger(this.constructor.name);
 
   constructor(
+    private readonly reflector: Reflector,
     private readonly context: ContextManager,
     @Inject(MODULE_OPTIONS_TOKEN)
     private readonly options: ContextModuleOptions,
@@ -40,10 +55,11 @@ export class ContextWrapper implements NestMiddleware, NestMiddleware {
 
   use(req: Request, res: Response, next: NextFunction) {
     this.logger.debug('Context was initialized');
-    const { middlewareSetup: mountMiddleware = () => null } = this.options;
+    const { middlewareSetup: mountMiddlewareFromModule = () => null } =
+      this.options;
     const store = this.context.getContextOrDefault();
     const id = req.get('x-context-id');
-    mountMiddleware(store, req);
+    mountMiddlewareFromModule(store, req);
     this.addContextIdOrDefault(store, id);
     this.context.run(store, async () => next());
   }
@@ -56,11 +72,23 @@ export class ContextWrapper implements NestMiddleware, NestMiddleware {
       return next.handle();
     }
     this.logger.debug('Context was initialized');
-    const { interceptorSetup: mountInterceptor = () => null } = this.options;
+    const fallbackSetup = () => null;
+    const { interceptorSetup: mountInterceptorFromModule = fallbackSetup } =
+      this.options;
     const context = this.context.getContextOrDefault();
-    mountInterceptor(context, executionContext);
-    /** TODO: reload context id from AMQP */
-    this.addContextIdOrDefault(context);
+    const { interceptorSetup: mountInterceptorFromDecorator = fallbackSetup } =
+      this.reflector.get<ReloadContextMetadata>(
+        KEY,
+        executionContext.getHandler(),
+      ) ?? {};
+    mountInterceptorFromModule(context, executionContext);
+    /**
+     * TODO: needs improvement, for reloading rpc contexts
+     * we depend libs to implement it. Neither bad nor good.
+     * We expose interface, dependant libs implement it.
+     */
+    mountInterceptorFromDecorator(context, executionContext);
+    this.addContextIdOrDefault(context, context.getId());
     return new Observable((subscriber) => {
       this.context.run(context, async () =>
         next

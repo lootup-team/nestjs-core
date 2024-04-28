@@ -7,7 +7,9 @@ export class ContextService {
   constructor(private readonly context: ContextManager) {}
 
   private getStore(strict = false) {
-    return strict ? this.context.getContext() : this.context.getContextOrDefault();
+    return strict
+      ? this.context.getContext()
+      : this.context.getContextOrDefault();
   }
   /**
    * Retrieves a previously stored value under the specified key.
