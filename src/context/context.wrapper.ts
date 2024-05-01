@@ -84,7 +84,7 @@ export class ContextWrapper implements NestMiddleware, NestMiddleware {
     mountInterceptorFromModule(context, executionContext);
     /**
      * TODO: needs improvement, for reloading rpc contexts
-     * we depend libs to implement it. Neither bad nor good.
+     * we depend on libs to implement it. Neither bad nor good.
      * We expose interface, dependant libs implement it.
      */
     mountInterceptorFromDecorator(context, executionContext);
