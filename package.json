@@ -1,7 +1,7 @@
 {
   "name": "@gedai/nestjs-core",
-  "version": "0.0.2",
-  "description": "Core Package for Gedai opionated use of NestJS",
+  "version": "0.0.3",
+  "description": "Core component for the gedai project",
   "author": "gm50x",
   "private": false,
   "publishConfig": {
