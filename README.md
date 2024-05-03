@@ -1,6 +1,6 @@
 ## Description
 
-Core package providing out of the box working implementation for using Async Local Storage with NestJS in both RPC and TPC manners.
+Seamless asynchronous local storage management using the NodeJS Async Local Storage. This package is designed as a core component for the `gedai` project, and offers plug-and-play functionality, empowering developers to effortlessly integrate asynchronous local storage into their applications.
 
 ## Getting Started
 
@@ -10,11 +10,9 @@ Core package providing out of the box working implementation for using Async Loc
 $ npm install @gedai/core
 ```
 
-### Step 2: The Setup
+### Step 2: Configuration Setup
 
-Import the required module and create the specific setup for your needs (http/rpc/both). These setup functions are completely optional and allow for customization of the initialization process.
-
-For HTTP apps use the middlewareSetup which applies globally to all routes, for Nest's Microservices use the interceptorSetup which will also apply globally, but as an interceptor since microservices don't have the middleware lifecycle. If you are working with a hybrid application, you can setup both methods and Context Module will automatically determine which is better for each execution context.
+In your `app.module.ts` import `ContextModule` and set it up.
 
 ```typescript
 // app.module.ts
@@ -26,13 +24,8 @@ import { AppService } from './app.service';
 
 @Module({
   imports: [
-    // <<-- Setup Context Module Here -->>
-    ContextModule.forRoot({
-      middlewareSetup: (store, req) => {
-        const traceId = req.get('x-trace-id') || randomUUID();
-        store.set('traceId', traceId);
-      },
-    }),
+    // Setup Context Module Here
+    ContextModule.forRoot({}),
   ],
   controllers: [AppController],
   providers: [AppService],
@@ -40,7 +33,7 @@ import { AppService } from './app.service';
 export class AppModule {}
 ```
 
-Apply global wide configuration in main.ts
+In `main.ts` import the apply the required configuration with `configureContextWrapper`.
 
 ```typescript
 // main.ts
@@ -50,7 +43,7 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule).then(
-    // <<-- Setup Context Wrappers Here -->>
+    // Setup Context Wrappers Here
     configureContextWrappers(),
   );
 
@@ -61,7 +54,7 @@ bootstrap();
 
 ## Step 3:
 
-You can now use the ContextService to get any values that have been previously stored or even set new ones as needed.
+In your services, add `ContextService` as an injectable dependency.
 
 ```typescript
 // app.service.ts
@@ -70,26 +63,26 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class AppService {
-  // <<-- Injected here -->>
+  // Injected here
   constructor(private readonly context: ContextService) {}
 
   getHello(): string {
-    // <<-- Used here -->>
-    const traceId = this.context.get<string>('traceId');
-    return `[${traceId}]: Hello World!`;
+    // Recover any previously set property
+    const contextId = this.context.getId();
+    return `[${contextId}]: Hello World!`;
   }
 }
 ```
 
-## Quick note about AsyncLocalStorage and Continuation Passing Style
+## Important Consideration Regarding AsyncLocalStorage and Continuation Passing Style
 
-Continuation passing style can bring a lot of complexity to systems. Although it is safe to use this method to share data accross layers and components, it should be done with caution. It is very easy to lose track of what data is being stored in the context and even introduce bugs or leaks.
+Implementing continuation passing style introduces complexity to systems. While it's a viable method for data sharing across layers and components, exercising caution is paramount. It's remarkably easy to lose oversight of stored data within the context, potentially leading to bugs or leaks.
 
 ### Potential Use Cases:
 
-- Tracking Execution Context (share a traceId through the request lifecycle)
-- Automatically Managing Database Transactions
-- Tracking tenant shard id
+- **Tracking Execution Context**: Utilize to share a traceId throughout the request lifecycle, facilitating seamless monitoring and debugging.
+- **Automatically Managing Database Transactions**: Implement for streamlined transaction handling, ensuring data integrity and consistency. Ability to handle the transactions without touching the business layers.
+- **Tracking Tenant Shard ID**: Employ for efficient tracking and management of tenant-specific data shards, enhancing multi-tenancy support and scalability without having to pass properties everywhere in your code.
 
 ## License
 
