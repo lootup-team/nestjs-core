@@ -6,7 +6,7 @@ import { ContextModuleOptions } from './context.options';
 import { configureOutboundHttpContextPropagation } from './context.propagator';
 import { ContextWrapper } from './context.wrapper';
 
-export const configureContextWrappers = () => (app: INestApplication) => {
+export const configureContextWrappers = (app: INestApplication) => {
   const reflector = app.get(Reflector);
   const context = app.get(ContextManager);
   const options = app.get<ContextModuleOptions>(MODULE_OPTIONS_TOKEN);
