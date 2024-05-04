@@ -6,6 +6,8 @@ Seamless asynchronous local storage management using the NodeJS Async Local Stor
 
 ### Step 1: Installation
 
+Install the necessary packages with your favorite Package Manager.
+
 ```bash
 $ npm install @gedai/core
 ```
@@ -52,7 +54,7 @@ async function bootstrap() {
 bootstrap();
 ```
 
-## Step 3:
+## Step 3: Usage
 
 In your services, add `ContextService` as an injectable dependency.
 
