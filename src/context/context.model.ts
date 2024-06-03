@@ -1,5 +1,6 @@
 export enum ContextKeys {
   ContextId = '__ContextId__',
+  CorrelationId = '__CorrelationId__',
 }
 
 export class Context {
@@ -10,7 +11,8 @@ export class Context {
    */
   static createNew() {
     const state = new Map<string, any>();
-    return new Context(state);
+    const context = new Context(state);
+    return context;
   }
 
   /**
@@ -32,6 +34,20 @@ export class Context {
    */
   setId(id: string) {
     return this.state.set(ContextKeys.ContextId, id);
+  }
+
+  /**
+   * Get the context id
+   */
+  getCorrelationId() {
+    return this.get<string>(ContextKeys.CorrelationId);
+  }
+
+  /**
+   * Get the context id
+   */
+  setCorrelationId(id: string) {
+    return this.state.set(ContextKeys.CorrelationId, id);
   }
 
   /**

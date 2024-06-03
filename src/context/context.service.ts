@@ -27,6 +27,13 @@ export class ContextService {
   }
 
   /**
+   * Retrieves the current running correlation id.
+   */
+  getCorrelationId(strict = false) {
+    return this.getStore(strict).getCorrelationId();
+  }
+
+  /**
    * Stores a given value under a given key. This method
    * is not collision free, be sure to have unique keys.
    */

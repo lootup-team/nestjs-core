@@ -3,7 +3,6 @@ import { Reflector } from '@nestjs/core';
 import { ContextManager } from './context.manager';
 import { MODULE_OPTIONS_TOKEN } from './context.module-builder';
 import { ContextModuleOptions } from './context.options';
-import { configureOutboundHttpContextPropagation } from './context.propagator';
 import { ContextWrapper } from './context.wrapper';
 
 export const configureContextWrappers = (app: INestApplication) => {
@@ -17,7 +16,6 @@ export const configureContextWrappers = (app: INestApplication) => {
     value: `${ContextWrapper.name}Middleware`,
   });
   app.use(middleware);
-  configureOutboundHttpContextPropagation(app);
   Logger.log(`${ContextWrapper.name} was initialized`, '@gedai/core');
   return app;
 };
