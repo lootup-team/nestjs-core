@@ -1,5 +1,5 @@
 {
-  "name": "@gedai/nestjs-core",
+  "name": "@lootupteam/nestjs-core",
   "version": "0.0.6",
   "description": "Core component for the gedai project",
   "author": "gm50x",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/gedai-dev/nestjs-core.git"
+    "url": "https://github.com/lootup-team/nestjs-core.git"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
