@@ -1,6 +1,6 @@
 ## Description
 
-Seamless asynchronous local storage management using the NodeJS Async Local Storage. This package is designed as a core component for the `gedai` project, and offers plug-and-play functionality, empowering developers to effortlessly integrate asynchronous local storage into their applications.
+Seamless asynchronous local storage management using the NodeJS Async Local Storage. This package is designed as a core component for the `gedai` project (currently supported by the `lootup` project), and offers plug-and-play functionality, empowering developers to effortlessly integrate asynchronous local storage into their applications.
 
 ## Getting Started
 
@@ -9,7 +9,7 @@ Seamless asynchronous local storage management using the NodeJS Async Local Stor
 Install the necessary packages with your favorite Package Manager.
 
 ```bash
-$ npm install @gedai/core
+$ npm install @lootupteam/nestjs-core
 ```
 
 ### Step 2: Configuration Setup
@@ -18,9 +18,8 @@ In your `app.module.ts` import `ContextModule` and set it up.
 
 ```typescript
 // app.module.ts
-import { ContextModule } from '@gedai/core';
+import { ContextModule } from '@lootupteam/nestjs-core';
 import { Module } from '@nestjs/common';
-import { randomUUID } from 'crypto';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
@@ -39,7 +38,7 @@ In `main.ts` import the apply the required configuration with `configureContextW
 
 ```typescript
 // main.ts
-import { configureContextWrappers } from '@gedai/core';
+import { configureContextWrappers } from '@lootupteam/nestjs-core';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
@@ -59,7 +58,7 @@ In your services, add `ContextService` as an injectable dependency.
 
 ```typescript
 // app.service.ts
-import { ContextService } from '@gedai/core';
+import { ContextService } from '@lootupteam/nestjs-core';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
@@ -87,4 +86,4 @@ Implementing continuation passing style introduces complexity to systems. While 
 
 ## License
 
-Gedai is [MIT licensed](LICENSE).
+@lootupteam/nestjscore is [MIT licensed](LICENSE).
