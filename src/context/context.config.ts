@@ -16,6 +16,9 @@ export const configureContextWrappers = (app: INestApplication) => {
     value: `${ContextWrapper.name}Middleware`,
   });
   app.use(middleware);
-  Logger.log(`${ContextWrapper.name} was initialized`, '@gedai/core');
+  Logger.log(
+    `${ContextWrapper.name} was initialized`,
+    '@lootupteam/nestjs-core',
+  );
   return app;
 };
