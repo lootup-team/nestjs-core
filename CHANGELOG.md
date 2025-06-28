@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/lootup-team/nestjs-core/compare/v1.0.0...v1.0.1) (2025-06-28)
+
+
+### Bug Fixes
+
+* change initialization log text ([521f8b3](https://github.com/lootup-team/nestjs-core/commit/521f8b3df12695c57fe0f4031061147c11e728de))
+
 # 1.0.0 (2025-06-27)
 
 
