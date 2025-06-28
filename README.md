@@ -2,6 +2,9 @@
 
 Seamless asynchronous local storage management using the NodeJS Async Local Storage. This package is designed as a core component for the `gedai` project (currently supported by the `lootup` project), and offers plug-and-play functionality, empowering developers to effortlessly integrate asynchronous local storage into their applications.
 
+## Why was this fork created?
+This package was originally developed by [gedai](https://github.com/gedai-dev), however he stopped maintaining it and so this fork was created. This repo may have improvements/changes in the future.
+
 ## Getting Started
 
 ### Step 1: Installation
